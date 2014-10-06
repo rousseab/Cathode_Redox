@@ -20,8 +20,7 @@ class CapacityCalculator(object):
 
     def get_capacity(self,compound):
 
-        atomic_mass = 0.
-
+        atomic_mass      = 0.
         transition_metal = 0.
 
         # get mass and quantity of transition metals
@@ -32,7 +31,7 @@ class CapacityCalculator(object):
                 transition_metal += number
 
 
-        ionic_charge = compound.composition_dict[self.active_ion]*compound.oxidation_states_dict[self.active_ion]
+        ionic_charge = compound.composition_dict[self.active_ion]
 
         effective_atomic_charge = N.min([ ionic_charge, transition_metal ])
 

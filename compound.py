@@ -51,9 +51,18 @@ class Compound(object):
         """
         split_formula_string = self.string.split()
 
+        # This could be implemented as a @property. 
+        # I may do that later...
+
+        tol = 1e-8
+        self.is_disordered = False
         for ss in split_formula_string: 
             element, number = self.parse_element(ss)
             self.composition_dict[element] = number
+
+            if abs(number - N.round(number)) > tol:
+                self.is_disordered = True
+
 
     def parse_element(self,str):
         """
@@ -149,8 +158,13 @@ class Compound(object):
         
         if number_of_solutions == 0:
             self.oxidation_states_dict =  None
+
         if number_of_solutions > 1:
-            raise(ValueError,'More than one oxidation state found!')
+            self.multiple_redox_solutions = True
+        else:
+            self.multiple_redox_solutions = False 
+
+            #raise(ValueError,'More than one oxidation state found!')
 
 
     def get_nice_formatted_formula(self):

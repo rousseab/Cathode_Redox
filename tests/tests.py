@@ -46,7 +46,6 @@ class TestingCompound(unittest.TestCase):
         cpd    = Compound(self.test_string3)
         self.assertEqual(cpd.composition_dict, result)
 
-
     def test_compound_oxidation_states1(self):
         result = { 'Na' : 1., 'Fe' : 2., 'P' : 5., 'O' : -2.} 
         cpd    = Compound(self.test_string3)
@@ -56,8 +55,18 @@ class TestingCompound(unittest.TestCase):
         # Construction to insure we catch the error
         result = None
         cpd = Compound(self.test_string4)
-
         self.assertEqual(cpd.oxidation_states_dict, result)
+
+    def test_compound_disorder1(self):
+        result = False
+        cpd    = Compound(self.test_string3)
+        self.assertEqual(cpd.is_disordered, result)
+
+    def test_compound_disorder2(self):
+        result = True
+        cpd    = Compound(self.test_string4)
+        self.assertEqual(cpd.is_disordered, result)
+
 
 class TestingCapacityCalculator(unittest.TestCase):
 
