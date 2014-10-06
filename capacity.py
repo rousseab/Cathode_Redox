@@ -32,7 +32,7 @@ class CapacityCalculator(object):
                 transition_metal += number
 
 
-        ionic_charge = cpd.composition_dict[self.active_ion]*cpd.oxidation_states_dict[self.active_ion]
+        ionic_charge = compound.composition_dict[self.active_ion]*compound.oxidation_states_dict[self.active_ion]
 
         effective_atomic_charge = N.min([ ionic_charge, transition_metal ])
 
