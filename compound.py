@@ -36,10 +36,13 @@ class Compound(object):
 
         self.string = compound_string
 
-        self.composition_dict   = {}
+
+
+        self.composition_dict = {}
 
         self.extract_composition()
         self.find_oxidation_states()
+        self.get_nice_formatted_formula()
 
     def extract_composition(self):
         """
@@ -84,28 +87,6 @@ class Compound(object):
 
         return element_symbol, number
 
-	def get_nice_formatted_formula(self,oxidation_state, alkaline):
-		formula = ''
-
-		found_alkali = False		
-		for el, n in zip(self.list_elements, self.list_numbers):
-			if el == alkaline:
-				formula += ' %s%i : '%(alkaline,n)
-				found_alkali  = True
-				break
-
-		if not found_alkali:
-			formula += ' %s%i : '%(alkaline,0)
-
-
-		for el, n in zip(self.list_elements, self.list_numbers):
-
-			EL = pymatgen.Element(el)
-			if EL.is_transition_metal:
-				ox = oxidation_state[el]
-				formula += ' %s%+i '%(el,ox)
-
-		return formula
 
     def find_oxidation_states(self):
         """
@@ -149,21 +130,49 @@ class Compound(object):
 
             oldTree = deepcopy(Tree)
 
-
         # The Tree structure now contains all possible combination of oxidation states
         # We must now find the physical ones, namely the charge zero combination
-        self.list_oxidation_states = []
+        self.oxidation_states_dict = {}
+
         tol = 1e-8
+
+        number_of_solutions = 0
 
         for branch in Tree:
             if N.abs(N.sum(branch)) < tol:
+                number_of_solutions +=1 
+
                 oxidation_states = branch/self.list_numbers
-                oxidation_states_dictionary = {}	
-
                 for el, ox in zip(self.list_elements,oxidation_states):
-                    oxidation_states_dictionary[el] =  ox
+                    self.oxidation_states_dict[el] =  ox
+
+        
+        if number_of_solutions == 0:
+            self.oxidation_states_dict =  None
+        if number_of_solutions > 1:
+            raise(ValueError,'More than one oxidation state found!')
 
 
-                self.list_oxidation_states.append(oxidation_states_dictionary)
+    def get_nice_formatted_formula(self):
+        """
+        Return the name of the compound in a nice format
+        """
+
+        self.formula = ''
+
+        tol = 1e-8
+
+        for el, n in zip(self.list_elements, self.list_numbers):
+
+            str = '%s'%el
+
+            if N.abs(n - 1.) < tol:
+                str += ' '
+            elif N.abs(n - N.round(n)) < tol:
+                str += '%i '%n
+            else: 
+                str += '%4.3f '%n
+
+            self.formula += str
 
 
